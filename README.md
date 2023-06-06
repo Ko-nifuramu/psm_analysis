@@ -7,9 +7,6 @@
 
 ・htmlからpsm分析を何円単位でやるのかを入力させ、結果を出力させる。(何円単位 : unit)
 
-## To Do
-・ classで綺麗にかく
-
 ## きついけどできればやりたいこと
 ・typescriptでも作る
 
@@ -18,3 +15,5 @@
 ・4つのpsm分析の価格だけでなく、下の図のようにグラフを出力させた方がわかりやすい
 
 ![download](https://github.com/Ko-nifuramu/psm_analysis/assets/115874828/55f1e850-684f-4415-879e-634da38a5c5d)
+
+・ classで綺麗にかく
