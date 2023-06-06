@@ -1,14 +1,25 @@
-//集計する単位を標準入力にした方が良い気がする
+// classでまとめた方がいい気がする
 //sortを使った方が計算量が少なくなる
 
 // 関数が多くなってきたから、util, srcとかのモジュールに分けたい
 //-> jsの場合どうやるのか不明、調べる
 
-var analysis_unit = 50;
-let = unit_element = document.getElementById("unit")
-main(analysis_unit);
+//let,varの使い分けがうまくできてない気がする
 
-function main(analysis_unit){
+main();
+
+function main(){
+    
+    let checkButton = document.getElementById("checkButton");
+    
+    checkButton.addEventListener('click', start_psm);
+    
+}
+
+
+function start_psm(){
+
+    //8~28 : psmデータを読み込む
     let csv = new XMLHttpRequest();
     csv.open("GET", "PSMrawdata.csv", false);
 
@@ -19,7 +30,6 @@ function main(analysis_unit){
     }
 
     //data.shape : (37, 5)
-    // 配列を定義
     let csvArray = [];
     // 改行ごとに配列化
     let lines = csv.responseText.split(/\r\n|\n/);
@@ -30,22 +40,43 @@ function main(analysis_unit){
         csvArray.push(cells);
         }
     }
+    
+
+    let unit_element = document.getElementById("unit");
+    let analysis_unit = Number(unit_element.value);
+
+    let psm_four_point = psm(analysis_unit, csvArray);
+
+    let pme_msg = document.getElementById("pme");
+    let opp_msg = document.getElementById("opp");
+    let idp_msg = document.getElementById("idp");
+    let pmc_msg = document.getElementById("pmc");
+
+    pme_msg.innerHTML = "最高価格 : " + psm_four_point[0][0];
+    opp_msg.innerHTML = "理想価格 : " + psm_four_point[1][0];
+    idp_msg.innerHTML = "妥協価格 : " + psm_four_point[2][0];
+    pmc_msg.innerHTML = "最低品質保証価格 : " + psm_four_point[3][0];
+
+}
+
+function psm(analysis_unit, csvArray){
 
     console.log(csvArray[1][2]);
-    let unit = analysis_unit;//標準入力させたい
-    let psm_analized_data = psmAnalize(csvArray, unit);
+    var unit = analysis_unit;
+    var psm_analized_data = psmAnalize(csvArray, unit);
 
-    let array_psm_four_point = calFourPSMPoint(psm_analized_data);
+    var array_psm_four_point = calFourPSMPoint(psm_analized_data, unit);
 
-    
-    console.log("point of extensiveness : 最高価格");
-    console.log(array_psm_four_point[0][0]);
-    console.log("Optimum Pricing point : 理想価格");
-    console.log(array_psm_four_point[1][0]);
-    console.log("Indifferrence Price Point : 妥協価格");
-    console.log(array_psm_four_point[2][0]);
-    console.log("Point of Marginal Cheapness : 最低品質保証価格");
-    console.log(array_psm_four_point[3][0]);
+    return array_psm_four_point;
+
+    // console.log("point of extensiveness : 最高価格");
+    // console.log(array_psm_four_point[0][0]);
+    // console.log("Optimum Pricing point : 理想価格");
+    // console.log(array_psm_four_point[1][0]);
+    // console.log("Indifferrence Price Point : 妥協価格");
+    // console.log(array_psm_four_point[2][0]);
+    // console.log("Point of Marginal Cheapness : 最低品質保証価格");
+    // console.log(array_psm_four_point[3][0]);
 }
 
 
@@ -133,15 +164,15 @@ function countHelper(array, isHigh, unit){
 
 /* util function calulate four point*/
 
-function searchFourPoint(array_ascend, array_descend){
+function searchFourPoint(array_ascend, array_descend, unit){
     var index = 0;
     var four_point_array = []
     while(array_ascend[index] <= array_descend[index]){
         index++;
     }
 
-    four_point_array =  [[50*index, array_ascend[index-1]], [50*(index+1), array_ascend[index]],
-                        [50*index, array_descend[index-1]], [50*(index+1), array_descend[index]]];
+    four_point_array =  [[unit*index, array_ascend[index-1]], [unit*(index+1), array_ascend[index]],
+                        [unit*index, array_descend[index-1]], [unit*(index+1), array_descend[index]]];
     
     return four_point_array;
 }
@@ -163,21 +194,21 @@ function calCrossPoint(point1, point2, point3, point4){
     return point_array;
 }
 
-function calFourPSMPoint(psm_analized_data){
+function calFourPSMPoint(psm_analized_data, unit){
     //point of extensiveness : 最高価格
-    var surround_point_pme = searchFourPoint(psm_analized_data[2], psm_analized_data[1]);
+    var surround_point_pme = searchFourPoint(psm_analized_data[2], psm_analized_data[1], unit);
     var pme = calCrossPoint(surround_point_pme[0], surround_point_pme[1], surround_point_pme[2], surround_point_pme[3]);
 
     //Optimum Pricing point : 理想価格
-    var surround_point_opp = searchFourPoint(psm_analized_data[2], psm_analized_data[3]);
+    var surround_point_opp = searchFourPoint(psm_analized_data[2], psm_analized_data[3], unit);
     var opp = calCrossPoint(surround_point_opp[0], surround_point_opp[1], surround_point_opp[2], surround_point_opp[3]);
 
     //Indifferrence Price Point : 妥協価格
-    var surround_point_idp = searchFourPoint(psm_analized_data[0], psm_analized_data[1]);
+    var surround_point_idp = searchFourPoint(psm_analized_data[0], psm_analized_data[1], unit);
     var idp = calCrossPoint(surround_point_idp[0], surround_point_idp[1], surround_point_idp[2], surround_point_idp[3]);
 
     //Point of Marginal Cheapness : 最低品質保証価格
-    var surround_point_pmc = searchFourPoint(psm_analized_data[0], psm_analized_data[3]);
+    var surround_point_pmc = searchFourPoint(psm_analized_data[0], psm_analized_data[3], unit);
     var pmc= calCrossPoint(surround_point_pmc[0], surround_point_pmc[1], surround_point_pmc[2], surround_point_pmc[3]);
 
     return [pme, opp, idp, pmc];
@@ -197,4 +228,8 @@ https://zenn.dev/sdkfz181tiger/articles/e95252e9e98615
 
 配列ソート : 
 https://codelikes.com/javascript-sort/
+
+html側からjsの変数(unit)に入力 : 
+https://www.javadrive.jp/javascript/form/index1.html
+
 */
