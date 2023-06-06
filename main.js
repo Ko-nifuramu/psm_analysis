@@ -1,7 +1,12 @@
+// util, srcとかのモジュールに分ける方法を調べる
+//let,var, constの使い分けがうまくできていない
+
 class PSMAnalyzer {
     constructor(csv_array) {
         this.csv_array = csv_array;
     }
+
+    /* util : psm analysis */
 
     analyze(analysis_unit) {
         let psm_array = [];
@@ -21,6 +26,7 @@ class PSMAnalyzer {
         each_property_array.sort((a,b)=> {
             return a > b ? 1: -1;
         });
+
         let is_high = (property_index === 1 || property_index === 3);
         let count_array = this.countHelper(each_property_array, is_high, analysis_unit);
         return count_array;
@@ -31,6 +37,7 @@ class PSMAnalyzer {
         let threshold = unit;
         let array_index = 0;
 
+        //昇順にソートしたことでこのように処理できる
         while (array_index < array.length) {
             if ((is_high && array[array_index] > threshold) || (!is_high && array[array_index] > threshold)) {
             count_array.push(is_high ? array_index : array.length - array_index);
@@ -43,6 +50,8 @@ class PSMAnalyzer {
         count_array.push(is_high ? 36 : 0);
         return count_array;
     }
+
+    /* utils : calculate four psm point */
 
     searchFourPoint(array_ascend, array_descend, unit) {
         let index = 0;
@@ -99,6 +108,7 @@ function startPsm() {
 
     console.log("-----------start analysis------------");
 
+    //111~123 : csvデータを読み込み
     let csvRequest = new XMLHttpRequest();
     csvRequest.open("GET", "PSMrawdata.csv", false);
     try {
@@ -144,6 +154,7 @@ function main() {
 }
 
 main();
+
 
 
 /*
