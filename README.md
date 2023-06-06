@@ -1,10 +1,13 @@
 # psm_analysis
 
-input analysis unitで何円単位でpsm分析をするか決めてください。
+1 : input analysis unitで何円単位でpsm分析をするか決めてください。
 
-入力後にbuttonを押すとpme, opp, idp, pmcの価格が整数で出力されます。
+2 : 入力後にbuttonを押すとpme, opp, idp, pmcの価格が整数で出力されます。
 
-pme, opp, idp, pmcの小数点まで含めた値はconsoleで見ることができます。
+　
+ 
+ 
+pme, opp, idp, pmcの小数点まで含めた値は、consoleで見ることができます。
 
 
 
