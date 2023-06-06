@@ -4,9 +4,11 @@
 // 関数が多くなってきたから、util, srcとかのモジュールに分けたい
 //-> jsの場合どうやるのか不明、調べる
 
-main();
+var analysis_unit = 50;
+let = unit_element = document.getElementById("unit")
+main(analysis_unit);
 
-function main(){
+function main(analysis_unit){
     let csv = new XMLHttpRequest();
     csv.open("GET", "PSMrawdata.csv", false);
 
@@ -30,24 +32,28 @@ function main(){
     }
 
     console.log(csvArray[1][2]);
-    let psm_analized_data = psmAnalize(csvArray);
+    let unit = analysis_unit;//標準入力させたい
+    let psm_analized_data = psmAnalize(csvArray, unit);
 
-    // let psm_four_analyze_point = calFourPSMPoint(psm_analized_data);
+    let array_psm_four_point = calFourPSMPoint(psm_analized_data);
 
-    // console.log("point of extensiveness : 最高価格");
-    // console.log(psm_four_analyze_point[0][0]);
-    // console.log("Optimum Pricing point : 理想価格");
-    // console.log(psm_four_analyze_point[1][0]);
-    // console.log("Indifferrence Price Point : 妥協価格");
-    // console.log(psm_four_analyze_point[2][0]);
-    // console.log("Point of Marginal Cheapness : 最低品質保証価格");
-    // console.log(psm_four_analyze_point[3][0]);
+    
+    console.log("point of extensiveness : 最高価格");
+    console.log(array_psm_four_point[0][0]);
+    console.log("Optimum Pricing point : 理想価格");
+    console.log(array_psm_four_point[1][0]);
+    console.log("Indifferrence Price Point : 妥協価格");
+    console.log(array_psm_four_point[2][0]);
+    console.log("Point of Marginal Cheapness : 最低品質保証価格");
+    console.log(array_psm_four_point[3][0]);
 }
 
 
-function psmAnalize(data){
+/* util function psm analysis*/
+
+function psmAnalize(data, unit){
     console.log(data[0].length);
-    let unit = 50;//標準入力させたい
+    
     let psm_array = []//shape : (4, max_threshold / unit)
 
     for(var index=1; index<data[0].length; index++){
@@ -123,29 +129,33 @@ function countHelper(array, isHigh, unit){
     return count_array;
 }
 
-//return [point1, point2, point3, point4]
-function searchFourPoint(array_ascend, array_decend){
+
+
+/* util function calulate four point*/
+
+function searchFourPoint(array_ascend, array_descend){
     var index = 0;
-    four_point_array = []
-    while(array_ascend[index] <= array_decend[index]){
+    var four_point_array = []
+    while(array_ascend[index] <= array_descend[index]){
         index++;
     }
 
-    return [[50*index, array_ascend[index-1]], [50*(index+1), array_ascend[index]]
-            [50*index, array_decend[index-1]], [50*(index+1), array_decend[index-1]]];
-
+    four_point_array =  [[50*index, array_ascend[index-1]], [50*(index+1), array_ascend[index]],
+                        [50*index, array_descend[index-1]], [50*(index+1), array_descend[index]]];
+    
+    return four_point_array;
 }
 
 
 function calCrossPoint(point1, point2, point3, point4){
     // point : [x, y]
     var point_array = [];
-    var x = (point3[1]-point1[1])*(point1[0]-point2[1])*(point3[0]-point4[0])
-    + point1[0]*(point1[1]-point2[1])*(point3[0]-point4[0]) - point3[0]*(point3[1]-point2[1])*(point1[0]-point2[0]);
+    var x = (point3[1]-point1[1])*(point1[0]-point2[0])*(point3[0]-point4[0])
+    + point1[0]*(point1[1]-point2[1])*(point3[0]-point4[0]) - point3[0]*(point3[1]-point4[1])*(point1[0]-point2[0]);
 
-    var x = x/((point1[1]-point2[1])*(point3[0]-point4[0]) - (point1[0]-point2[0])*(point3[1]-point4[1]));
+    x = x/((point1[1]-point2[1])*(point3[0]-point4[0]) - (point1[0]-point2[0])*(point3[1]-point4[1]));
 
-    var y = x*(point1[1]-point2[1])/(point1[0]-point2[1]) + point1[1] - point1[0]*(point1[1]-point2[1])/(point1[0]-point2[0]);
+    var y = x*(point1[1]-point2[1])/(point1[0]-point2[0]) + point1[1] - point1[0]*(point1[1]-point2[1])/(point1[0]-point2[0]);
 
     point_array.push(x);
     point_array.push(y);
@@ -155,20 +165,20 @@ function calCrossPoint(point1, point2, point3, point4){
 
 function calFourPSMPoint(psm_analized_data){
     //point of extensiveness : 最高価格
-    let surround_point_pme = searchFourPoint[psm_analized_data[2], psm_analized_data[1]];
-    let pme = calCrossPoint(surround_point_pme[0], surround_point_pme[1], surround_point_pme[2], surround_point_pme[3]);
+    var surround_point_pme = searchFourPoint(psm_analized_data[2], psm_analized_data[1]);
+    var pme = calCrossPoint(surround_point_pme[0], surround_point_pme[1], surround_point_pme[2], surround_point_pme[3]);
 
     //Optimum Pricing point : 理想価格
-    let surround_point_opp = searchFourPoint[psm_analized_data[2], psm_analized_data[1]];
-    let opp = calCrossPoint(surround_point_opp[0], surround_point_opp[1], surround_point_opp[2], surround_point_opp[3]);
+    var surround_point_opp = searchFourPoint(psm_analized_data[2], psm_analized_data[3]);
+    var opp = calCrossPoint(surround_point_opp[0], surround_point_opp[1], surround_point_opp[2], surround_point_opp[3]);
 
     //Indifferrence Price Point : 妥協価格
-    let surround_point_idp = searchFourPoint[psm_analized_data[2], psm_analized_data[1]];
-    let idp = calCrossPoint(surround_point_idp[0], surround_point_idp[1], surround_point_idp[2], surround_point_idp[3]);
+    var surround_point_idp = searchFourPoint(psm_analized_data[0], psm_analized_data[1]);
+    var idp = calCrossPoint(surround_point_idp[0], surround_point_idp[1], surround_point_idp[2], surround_point_idp[3]);
 
     //Point of Marginal Cheapness : 最低品質保証価格
-    let surround_point_pmc = searchFourPoint[psm_analized_data[2], psm_analized_data[1]];
-    let pmc= calCrossPoint(surround_point_pmc[0], surround_point_pmc[1], surround_point_pmc[2], surround_point_pmc[3]);
+    var surround_point_pmc = searchFourPoint(psm_analized_data[0], psm_analized_data[3]);
+    var pmc= calCrossPoint(surround_point_pmc[0], surround_point_pmc[1], surround_point_pmc[2], surround_point_pmc[3]);
 
     return [pme, opp, idp, pmc];
 }
