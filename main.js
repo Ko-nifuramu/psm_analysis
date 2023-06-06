@@ -139,6 +139,7 @@ function startPsm() {
     idp_msg.innerHTML = "妥協価格 : " + Math.round(psm_four_point[2][0]) + "円";
     pmc_msg.innerHTML = "最低品質保証価格 : " + Math.round(psm_four_point[3][0]) + "円";
 
+    
     console.log(analysis_unit + "円単位で計算")
     console.log("\n")
     console.log("最高価格 : " + psm_four_point[0][0]);
