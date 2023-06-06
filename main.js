@@ -52,10 +52,10 @@ function start_psm(){
     let idp_msg = document.getElementById("idp");
     let pmc_msg = document.getElementById("pmc");
 
-    pme_msg.innerHTML = "最高価格 : " + psm_four_point[0][0];
-    opp_msg.innerHTML = "理想価格 : " + psm_four_point[1][0];
-    idp_msg.innerHTML = "妥協価格 : " + psm_four_point[2][0];
-    pmc_msg.innerHTML = "最低品質保証価格 : " + psm_four_point[3][0];
+    pme_msg.innerHTML = "最高価格 : " + Math.round(psm_four_point[0][0]) + "円";
+    opp_msg.innerHTML = "理想価格 : " + Math.round(psm_four_point[1][0]) + "円";
+    idp_msg.innerHTML = "妥協価格 : " + Math.round(psm_four_point[2][0]) + "円";
+    pmc_msg.innerHTML = "最低品質保証価格 : " + Math.round(psm_four_point[3][0]) + "円";
 
 }
 
