@@ -134,10 +134,10 @@ function startPsm() {
             error_msg.innerHTML = "analysis_unitには正の整数を入れてください";
             throw new TypeError("unitには整数を入れてください");
         }
-        if(analysis_unit<=0 || analysis_unit>500){
+        if(analysis_unit<=0 || analysis_unit>250){
             let error_msg = document.getElementById("unit_error");
-            error_msg.innerHTML = "analysis_unitには0より大きく500より小さい整数を入れてください";
-            throw new RangeError("unitには 0<unit<500の整数を入れてください");
+            error_msg.innerHTML = "analysis_unitには0より大きく250より小さい整数を入れてください";
+            throw new RangeError("unitには 0<unit<250の整数を入れてください");
         }
     }catch(err){
         console.error(err)
