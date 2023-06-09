@@ -123,7 +123,26 @@ function startPsm() {
         .map(line => line.split(","));
 
     let unit_element = document.getElementById("unit");
+    let error_msg = document.getElementById("unit_error");
+    error_msg.innerHTMLx = "";
+
     let analysis_unit = Number(unit_element.value);
+
+    try{
+        if(isNaN(analysis_unit)){
+            let error_msg = document.getElementById("unit_error");
+            error_msg.innerHTML = "analysis_unitには正の整数を入れてください";
+            throw new TypeError("unitには整数を入れてください");
+        }
+        if(analysis_unit<=0 || analysis_unit>500){
+            let error_msg = document.getElementById("unit_error");
+            error_msg.innerHTML = "analysis_unitには0より大きく500より小さい整数を入れてください";
+            throw new RangeError("unitには 0<unit<500の整数を入れてください");
+        }
+    }catch(err){
+        console.error(err)
+    }
+    
 
     let analyzer = new PSMAnalyzer(csv_array);
     let psm_analized_data = analyzer.analyze(analysis_unit);
