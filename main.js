@@ -27,7 +27,7 @@ class PSMAnalyzer {
             return a > b ? 1: -1;
         });
 
-        let is_high = (property_index === 1 || property_index === 3);
+        const is_high = (property_index === 1 || property_index === 3);
         let count_array = this.countHelper(each_property_array, is_high, analysis_unit);
         return count_array;
     }
@@ -39,15 +39,16 @@ class PSMAnalyzer {
 
         //昇順にソートしたことでこのように処理できる
         while (array_index < array.length) {
-            if ((is_high && array[array_index] > threshold) || (!is_high && array[array_index] > threshold)) {
-            count_array.push(is_high ? array_index : array.length - array_index);
+            if ((is_high && array[array_index] > threshold) || (!is_high && array[array_index] >= threshold)) {
+            count_array.push(is_high ? array_index*100/36 : (array.length - array_index)*100/36);
             threshold += unit;
             } else {
             array_index++;
             }
         }
     
-        count_array.push(is_high ? 36 : 0);
+        count_array.push(is_high ? 100 : 0);
+        console.log(count_array);
         return count_array;
     }
 
@@ -62,11 +63,12 @@ class PSMAnalyzer {
 
         let four_point_array = [
             [unit * index, array_ascend[index - 1]],
-            [unit * (index + 1), array_ascend[index]],
-            [unit * index, array_descend[index - 1]],
-            [unit * (index + 1), array_descend[index]]
+            [unit * (index+1), array_ascend[index]],
+            [unit * index, array_descend[index-1]],
+            [unit * (index+1), array_descend[index]]
         ];
 
+        console.log(four_point_array);
         return four_point_array;
     }
 
